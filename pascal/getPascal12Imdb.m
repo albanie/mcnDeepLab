@@ -1,0 +1,13 @@
+function imdb = getPascal12Imdb(opts) 
+% GETPASCAL12IMDB - load Pascal Imdb file
+
+  dataDir = fullfile(opts.dataOpts.root, 'pascal12') ;
+  imdb = vocSetup('dataDir', dataDir, ...
+    'edition', opts.dataOpts.vocEdition, ...
+    'includeTest', opts.dataOpts.includeTest, ...
+    'includeSegmentation', opts.dataOpts.includeSegmentation, ...
+    'includeDetection', opts.dataOpts.includeDetection) ;
+
+  if opts.dataOpts.vocAdditionalSegmentations
+    imdb = vocSetupAdditionalSegmentations(imdb, 'dataDir', opts.dataDir) ;
+  end

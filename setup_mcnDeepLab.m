@@ -7,4 +7,4 @@ function setup_mcnDeepLab()
 
   root = fileparts(mfilename('fullpath')) ;
   addpath(root, [root '/matlab'], [root '/pascal'], [root '/core']) ;
-  addpath([root '/pascal/helpers'], [root '/coco'], [root '/misc']) ;
+  addpath([root '/misc']) ;
