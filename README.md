@@ -1,4 +1,4 @@
-DeepLabv2
+DeepLab
 ---
 
 This repo contains code to evaluate the models described in the paper:

@@ -1,5 +1,5 @@
-function setup_mcnDeepLabv2()
-%SETUP_MCNDEEPLABV2 Sets up mcnDeepLabv2, by adding its folders 
+function setup_mcnDeepLab()
+%SETUP_MCNDEEPLAB Sets up mcnDeepLab, by adding its folders 
 % to the Matlab path
 %
 % Copyright (C) 2017 Samuel Albanie
