@@ -1,4 +1,4 @@
-DeepLab
+mcnDeepLab
 ---
 
 This repo contains code to evaluate the models described in the paper:
@@ -13,6 +13,12 @@ The code is based on [this](https://github.com/xmyqsh/deeplab-v2) caffe implemen
 
 The pre-trained models released with the caffe code which have been imported into matconvnet and 
 can be downloaded [here](http://www.robots.ox.ac.uk/~albanie/models.html#deeplab-models).
+
+### Demo
+
+Running the `deeplab_demo.m` script will download a model trained on pascal voc 2012 data and run it on a sample image to produce the figure below:
+
+<img src="misc/figure.png" width="800" />
 
 ### Functionality
 
