@@ -11,7 +11,7 @@ function setup_mcnDeepLab()
   check_dependency('mcnDatasets') ;
 
   root = fileparts(mfilename('fullpath')) ;
-  addpath(root, [root '/matlab'], [root '/pascal'], [root '/core']) ;
+  addpath(root, [root '/pascal'], [root '/core']) ;
 
 % -----------------------------------
 function check_dependency(moduleName)
