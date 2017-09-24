@@ -16,7 +16,7 @@ function fix_imports_deeplab(varargin)
 
   % select model
   res = dir(fullfile(opts.modelDir, '*.mat')) ; modelNames = {res.name} ;
-  modelNames = modelNames(contains(modelNames, 'ssd-mcn-mobile')) ;
+  modelNames = modelNames(contains(modelNames, 'deeplab')) ;
 
   for mm = 1:numel(modelNames)
     modelPath = fullfile(opts.modelDir, modelNames{mm}) ;
@@ -29,51 +29,31 @@ function fix_imports_deeplab(varargin)
       net.layers(ii).inputs = strrep(net.layers(ii).inputs, '/', '_') ;
       net.layers(ii).outputs = strrep(net.layers(ii).outputs, '/', '_') ;
       net.layers(ii).params = strrep(net.layers(ii).params, '/', '_') ;
+
+      % fix layer option types
+      if strcmp(net.layers(ii).type, 'dagnn.Interp')
+        block = net.layers(ii).block ;
+        net.layers(ii).block.zoomFactor = double(block.zoomFactor) ;
+        net.layers(ii).block.shrinkFactor = double(block.shrinkFactor) ;
+        net.layers(ii).block.padBeg = double(block.padBeg) ;
+        net.layers(ii).block.padEnd = double(block.padEnd) ;
+      end
     end
     for ii = 1:numel(net.params)
       net.params(ii).name = strrep(net.params(ii).name, '/', '_') ;
     end
 
-    for ii = 1:numel(net.layers)
-      % fix priorboxes
-      if strcmp(net.layers(ii).type, 'dagnn.PriorBox')
-        pixelStep = net.layers(ii).block.pixelStep ;
-        if isempty(pixelStep) || pixelStep == 1
-          net.layers(ii).block.pixelStep = 0 ;
-        end
-        if isempty(net.layers(ii).block.offset)
-          net.layers(ii).block.offset = 0.5 ;
-        end
-        if isempty(net.layers(ii).block.maxSize)
-          net.layers(ii).block.maxSize = 0 ;
-        end
-      end
-
-      % reverse dims for faster detection on final set
-      if strcmp(net.layers(ii).name, 'mbox_priorbox')
-        net.layers(ii).block.dim = 1 ;
-      end
-
-      % switch to softmax transpose
-      if strcmp(net.layers(ii).type, 'dagnn.SoftMax')
-        net.layers(ii).type = 'dagnn.SoftMaxTranspose' ;
-        net.layers(ii).block = struct('dim', 1) ;
-      end
-
-      % switch to softmax transpose
-      if strcmp(net.layers(ii).type, 'dagnn.Reshape')
-        shape = net.layers(ii).block.shape ;
-        if isequal(shape, [0, -1, 21])
-          net.layers(ii).block.shape = {opts.numClasses  []  1} ;
-        end
-      end
-
-    end
-
     % fix meta 
     fprintf('adding info to %s (%d/%d)\n', modelPath, mm, numel(modelNames)) ;
     %net.meta.classes = imdb.classes ;
-    net.meta.normalization.imageSize = [300 300 3] ;
+    net.meta.normalization.averageImage = [122.675 116.669 104.008] ;
+    net.meta.normalization.imageSize = [513 513 3] ;
+    if contains(modelNames{mm}, 'res101')
+      net.meta.predVar = 'fc1_interp' ;
+    elseif contains(modelNames{mm}, 'vggvd')
+      net.meta.predVar = 'fc8_interp' ;
+    else, error('%s trunk not recognised', modelNames{mm}) ;
+    end
     net = dagnn.DagNN.loadobj(net) ; 
     net = net.saveobj() ; save(modelPath, '-struct', 'net') ; %#ok
   end

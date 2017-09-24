@@ -18,10 +18,10 @@ addpath(caffePath) ;
 caffeRoot = '/users/albanie/coding/libs/caffes/deeplabv2-caffe' ;
 
 % set paths and load caffe ssd-model
-modelDir = '/users/albanie/data/models/caffe/deeplab/vgg16' ;
-dataDir = '/users/albanie/data/models/caffe/deeplab/vgg16' ;
+modelDir = '/users/albanie/data/models/caffe/deeplab/res101' ;
+dataDir = '/users/albanie/data/models/caffe/deeplab/res101' ;
 model = fullfile(modelDir, 'safe_test.prototxt') ;
-weights = fullfile(dataDir, 'train2_iter_20000.caffemodel') ;
+weights = fullfile(dataDir, 'train_iter_20000.caffemodel') ;
 caffe.set_mode_cpu() ;
 
 % to use the relative paths defined in the prototxt, we change into the 
@@ -32,9 +32,7 @@ cd(caffeRoot) ;
 caffeNet = caffe.Net(model, weights, 'test') ;
 
 % load mcn model for comparison
-
-% set path to trunk model (VGG-VD-16)
 opts.trunkModelPath = fullfile(vl_rootnn, 'data/models-import', ...
-                                'deeplab-vggvd-v2.mat') ;
-opts.imageSize = [300 300] ;
+                                'deeplab-res101-t-v2.mat') ;
+opts.imageSize = [513 513] ;
 net = load(opts.trunkModelPath) ; net = dagnn.DagNN.loadobj(net) ;

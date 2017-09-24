@@ -18,6 +18,7 @@
   im_ = im_(:,:,[3 2 1],:) ;
 
   res = caffeNet.forward({im_}) ;
+keyboard
 
   pairs = [] ;
   names_ = caffeNet.blob_names() ;
@@ -89,9 +90,9 @@
     blobData = caffeNet.blob_vec(i_).get_data() ;
 
     xiNameTokens = strsplit(xiName, '_') ;
-    layerType = xiNameTokens{end} ;
+    layerType = xiNameTokens{1} ;
     switch layerType
-      case 'data'
+      case {'data'}
         % flip BGR -> RGB for input comparison
         tmp = permute(blobData, [2 1 3 4]) ;
         xi_ = tmp(:,:,[3 2 1],:) ; 
@@ -124,7 +125,7 @@
     namei = net.vars(i).name ;
     namei_ = char(caffeNet.blob_names(i_)) ;
 
-    layerToInspect = 78 ;
+    %layerToInspect = 6 ;
     %if i == layerToInspect
       %keyboard
       %% prevs
@@ -135,9 +136,9 @@
       %a=vl_imarray(xi) ;
       %b=vl_imarray(xi_) ;
       %imagesc(vl_imsc([a,b,a-b])) ;
-      %title(str) ;
+      %%title(str) ;
       %drawnow ;
-      %zv_dispFig() ; % inline visualization
+      %zs_dispFig() ; % inline visualization
     %end
 
     try

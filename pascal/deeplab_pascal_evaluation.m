@@ -5,6 +5,9 @@ function deeplab_pascal_evaluation(varargin)
   opts.gpus = 1 ;
   opts.modelName = 'deeplab-vggvd-v2' ;
   opts.dataDir = fullfile(vl_rootnn, 'data') ;
+
+  % configure model options
+  opts.modelOpts.get_eval_batch = @fcn_eval_get_batch ;
   opts = vl_argparse(opts, varargin) ;
 
   % load network
@@ -30,19 +33,22 @@ function deeplab_pascal_evaluation(varargin)
   cacheOpts.refreshEvaluationCache = false ;
   cacheOpts.refreshFigures = false ;
 
-  % configure model options
-  modelOpts.predVar = 'prediction' ;
-  modelOpts.get_eval_batch = @fcn_eval_get_batch ;
 
   % configure dataset options
   dataOpts.name = 'pascal' ;
   dataOpts.decoder = 'serial' ;
-  dataOpts.getImdb = @getPascal11Imdb ;
-  dataOpts.eval_func = @pascal11_eval_func ;
+  dataOpts.getImdb = @getPascal12Imdb ;
+  dataOpts.eval_func = @pascal12_eval_func ;
   dataOpts.displayResults = @displayPascalResults ;
-  dataOpts.dataRoot = fullfile(vl_rootnn, 'data', 'datasets') ;
-  dataOpts.imdbPath = fullfile(opts.dataDir, 'pascal11/standard_imdb/imdb.mat') ;
+  dataOpts.root = fullfile(vl_rootnn, 'data', 'datasets') ;
+  dataOpts.imdbPath = fullfile(opts.dataDir, 'pascal12/standard_imdb/imdb.mat') ;
   dataOpts.configureImdbOpts = @configureImdbOpts ;
+  dataOpts.vocEdition = '12' ;
+  dataOpts.includeTest = true ;
+  dataOpts.includeSegmentation = true ;
+  dataOpts.includeDetection = true ;
+  dataOpts.vocAdditionalSegmentations = true ;
+  dataOpts.dataRoot =  dataOpts.root ;
 
   % configure paths
   tail = fullfile('evaluations', dataOpts.name, opts.modelName) ;
@@ -63,33 +69,33 @@ function deeplab_pascal_evaluation(varargin)
 
   % configure meta options
   opts.dataOpts = dataOpts ;
-  opts.modelOpts = modelOpts ;
   opts.batchOpts = batchOpts ;
   opts.cacheOpts = cacheOpts ;
 
-  fcn_evaluation(expDir, net, opts) ;
+  deeplab_evaluation(expDir, net, opts) ;
 
 
 % ------------------------------------------------------------------
-function aps = pascal11_eval_func(modelName, decodedPreds, imdb, opts)
+function aps = pascal12_eval_func(modelName, decodedPreds, imdb, opts)
 % ------------------------------------------------------------------
+aps = [] ;
 keyboard
 
-numClasses = numel(imdb.meta.classes) - 1 ;  % exclude background
-aps = zeros(numClasses, 1) ;
+%numClasses = numel(imdb.meta.classes) - 1 ;  % exclude background
+%aps = zeros(numClasses, 1) ;
 
-for c = 1:numClasses
-    className = imdb.meta.classes{c + 1} ; % offset for background
-    results = eval_voc(className, ...
-                       decodedPreds.imageIds{c}, ...
-                       decodedPreds.bboxes{c}, ...
-                       decodedPreds.scores{c}, ...
-                       opts.dataOpts.VOCopts, ...
-                       'evalVersion', opts.dataOpts.evalVersion) ;
-    fprintf('%s %.1\n', className, 100 * results.ap) ;
-    aps(c) = results.ap ;
-end
-save(opts.cacheOpts.resultsCache, 'aps') ;
+%for c = 1:numClasses
+    %className = imdb.meta.classes{c + 1} ; % offset for background
+    %results = eval_voc(className, ...
+                       %decodedPreds.imageIds{c}, ...
+                       %decodedPreds.bboxes{c}, ...
+                       %decodedPreds.scores{c}, ...
+                       %opts.dataOpts.VOCopts, ...
+                       %'evalVersion', opts.dataOpts.evalVersion) ;
+    %fprintf('%s %.1\n', className, 100 * results.ap) ;
+    %aps(c) = results.ap ;
+%end
+%save(opts.cacheOpts.resultsCache, 'aps') ;
 
 % -----------------------------------------------------------
 function opts = configureImdbOpts(expDir, opts)
@@ -152,4 +158,3 @@ fprintf('\n============\n') ;
 fprintf(sprintf('%s set performance of %s:', opts.testset, modelName)) ;
 fprintf('%.1f (mean ap) \n', 100 * mean(aps)) ;
 fprintf('\n============\n') ;
-printPascalResults(opts.cacheOpts.evalCacheDir, 'orientation', 'portrait') ;
