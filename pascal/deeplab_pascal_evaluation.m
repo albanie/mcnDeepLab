@@ -39,7 +39,7 @@ function deeplab_pascal_evaluation(varargin)
   % configure dataset options
   dataOpts.name = 'pascal' ;
   dataOpts.decoder = 'serial' ;
-  dataOpts.getImdb = @getPascal12Imdb ;
+  dataOpts.getImdb = @(x) getPascalYearImdb(12, x) ; % 2012 data
   dataOpts.displayResults = @displayPascalResults ;
   dataOpts.root = fullfile(vl_rootnn, 'data', 'datasets') ;
   dataOpts.imdbPath = fullfile(opts.dataDir, 'pascal12/standard_imdb/imdb.mat') ;
