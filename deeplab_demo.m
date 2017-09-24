@@ -65,7 +65,10 @@ function deeplab_demo(varargin)
 
   % run network and retrieve results
   net.eval(inputs{:}) ;
-  preds = squeeze(net.vars(predIdx).value) ;
+  switch opts.wrapper
+    case 'dagnn', preds = squeeze(net.vars(predIdx).value) ;
+    case 'autonn', preds = squeeze(net.vars{predIdx}) ;
+  end
 
   % visualise predictions
   [~,labels] = max(preds, [], 3) ;
