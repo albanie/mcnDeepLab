@@ -1,5 +1,8 @@
 function deeplab_pascal_evaluation(varargin)
-%FCN_PASCAL_EVALUATION evaluate FCN on pascal VOC
+%DEEPLAB_PASCAL_EVALUATION evaluate FCN on pascal VOC 2012
+%
+% Copyright (C) 2017 Samuel Albanie 
+% Licensed under The MIT License [see LICENSE.md for details]
 
   opts.net = [] ;
   opts.gpus = 1 ;
@@ -33,12 +36,10 @@ function deeplab_pascal_evaluation(varargin)
   cacheOpts.refreshEvaluationCache = false ;
   cacheOpts.refreshFigures = false ;
 
-
   % configure dataset options
   dataOpts.name = 'pascal' ;
   dataOpts.decoder = 'serial' ;
   dataOpts.getImdb = @getPascal12Imdb ;
-  dataOpts.eval_func = @pascal12_eval_func ;
   dataOpts.displayResults = @displayPascalResults ;
   dataOpts.root = fullfile(vl_rootnn, 'data', 'datasets') ;
   dataOpts.imdbPath = fullfile(opts.dataDir, 'pascal12/standard_imdb/imdb.mat') ;
@@ -58,10 +59,6 @@ function deeplab_pascal_evaluation(varargin)
   decodedPredsFile = sprintf('%s-%s-decoded.mat', opts.modelName, opts.testset) ;
   evalCacheDir = fullfile(expDir, 'eval_cache') ;
 
-  %if ~exist(evalCacheDir, 'dir') 
-      %mkdir(evalCacheDir) ; mkdir(fullfile(evalCacheDir, 'cache')) ;
-  %end
-
   cacheOpts.rawPredsCache = fullfile(evalCacheDir, rawPredsFile) ;
   cacheOpts.decodedPredsCache = fullfile(evalCacheDir, decodedPredsFile) ;
   cacheOpts.resultsCache = fullfile(evalCacheDir, resultsFile) ;
@@ -71,31 +68,7 @@ function deeplab_pascal_evaluation(varargin)
   opts.dataOpts = dataOpts ;
   opts.batchOpts = batchOpts ;
   opts.cacheOpts = cacheOpts ;
-
   deeplab_evaluation(expDir, net, opts) ;
-
-
-% ------------------------------------------------------------------
-function aps = pascal12_eval_func(modelName, decodedPreds, imdb, opts)
-% ------------------------------------------------------------------
-aps = [] ;
-keyboard
-
-%numClasses = numel(imdb.meta.classes) - 1 ;  % exclude background
-%aps = zeros(numClasses, 1) ;
-
-%for c = 1:numClasses
-    %className = imdb.meta.classes{c + 1} ; % offset for background
-    %results = eval_voc(className, ...
-                       %decodedPreds.imageIds{c}, ...
-                       %decodedPreds.bboxes{c}, ...
-                       %decodedPreds.scores{c}, ...
-                       %opts.dataOpts.VOCopts, ...
-                       %'evalVersion', opts.dataOpts.evalVersion) ;
-    %fprintf('%s %.1\n', className, 100 * results.ap) ;
-    %aps(c) = results.ap ;
-%end
-%save(opts.cacheOpts.resultsCache, 'aps') ;
 
 % -----------------------------------------------------------
 function opts = configureImdbOpts(expDir, opts)
