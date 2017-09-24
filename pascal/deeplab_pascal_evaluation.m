@@ -48,7 +48,7 @@ function deeplab_pascal_evaluation(varargin)
   dataOpts.includeTest = false ;
   dataOpts.includeSegmentation = true ;
   dataOpts.includeDetection = true ;
-  dataOpts.vocAdditionalSegmentations = true ;
+  dataOpts.vocAdditionalSegmentations = false ;
   dataOpts.dataRoot =  dataOpts.root ;
 
   % configure paths
