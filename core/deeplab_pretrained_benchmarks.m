@@ -28,6 +28,6 @@ function deeplab_pretrained_benchmarks(varargin)
 
   for ii = 1:numel(models)
       model = models{ii} ;
-      deeplab_pascal_evaluation('modelName', model, 'gpus', opts.gpu) ;
+      deeplab_pascal_evaluation('modelName', model, 'gpus', opts.gpus) ;
   end
 
