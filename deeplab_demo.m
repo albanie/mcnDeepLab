@@ -23,7 +23,7 @@ function deeplab_demo(varargin)
   opts = vl_argparse(opts, varargin) ;
 
   % Load or download an example faster-rcnn model:
-  modelName = 'deeplab-res101-v2.mat' ;
+  modelName = 'deeplab-res101-v2.mat' ; % slower, mutliscale model
   paths = {opts.modelPath, ...
            modelName, ...
            fullfile(vl_rootnn, 'data', 'models-import', modelName)} ;
@@ -43,19 +43,21 @@ function deeplab_demo(varargin)
   net = loadModel(opts) ;
 
   % Load test image
-  %imPath = fullfile(vl_rootnn, 'contrib/mcnDeepLab/misc/000013.jpg') ;
   imPath = fullfile(vl_rootnn, 'contrib/mcnDeepLab/misc/000022.jpg') ;
-  im = single(imread(imPath)) ;
+  origIm = single(imread(imPath)) ;
 
   % choose variables to track
   predIdx = net.getVarIndex(net.meta.predVar) ;
 
-  % resize and subtract mean
+  % resize to ensure multilpe of 32 and subtract mean
   meanIm = reshape(net.meta.normalization.averageImage, [1 1 3]) ;
-  data = bsxfun(@minus, im, meanIm) ;
+  im = bsxfun(@minus, origIm, meanIm) ;
+  sz = [size(im,1), size(im,2)] ; 
+  sz_ = round(sz / 32)*32 ;
+  im = imresize(im, sz_) ;
 
   % set inputs
-  sample = {'data', data} ;
+  sample = {'data', im} ;
   switch opts.wrapper
     case 'dagnn', inputs = {sample} ; net.mode = 'test' ;
     case 'autonn', inputs = {sample, 'test'} ;
@@ -67,9 +69,14 @@ function deeplab_demo(varargin)
 
   % visualise predictions
   [~,labels] = max(preds, [], 3) ;
-  cmap = VOClabelcolormap ;
-  colormap(cmap) ; imagesc(labels) ;
-  title('predicted segmentation for image') ;
+  figure('pos',[0 0 900 500])
+  subplot(1,2,1) ; imagesc(origIm/ 255) ;
+  title('original image') ;
+  axis off ;
+  subplot(1,2,2) ; cmap = VOClabelcolormap ; colormap(cmap) ; 
+  imagesc(labels) ; 
+  axis off ;
+  title('predicted segmentation') ;
   if exist('zs_dispFig', 'file'), zs_dispFig ; end
 
 % ----------------------------
