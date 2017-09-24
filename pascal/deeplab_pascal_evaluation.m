@@ -45,7 +45,7 @@ function deeplab_pascal_evaluation(varargin)
   dataOpts.imdbPath = fullfile(opts.dataDir, 'pascal12/standard_imdb/imdb.mat') ;
   dataOpts.configureImdbOpts = @configureImdbOpts ;
   dataOpts.vocEdition = '12' ;
-  dataOpts.includeTest = true ;
+  dataOpts.includeTest = false ;
   dataOpts.includeSegmentation = true ;
   dataOpts.includeDetection = true ;
   dataOpts.vocAdditionalSegmentations = true ;
