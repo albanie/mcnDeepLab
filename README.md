@@ -23,8 +23,8 @@ There is a script to evaluate trained models on the `pascal voc 2012` dataset fo
 This module can be installed with the following `vl_contrib` commands:
 
 ```
-vl_contrib('install', 'mcnDeeplab') ;
-vl_contrib('setup', 'mcnDeeplab') ;
+vl_contrib('install', 'mcnDeepLab') ;
+vl_contrib('setup', 'mcnDeepLab') ;
 ```  
 
 The code has the following dependencies (these can similarly be added with `vl_contrib`):
