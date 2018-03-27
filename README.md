@@ -12,7 +12,7 @@ Transactions on Pattern Analysis and Machine Intelligence (TPAMI)
 The code is based on [this](https://github.com/xmyqsh/deeplab-v2) caffe implementation.
 
 The pre-trained models released with the caffe code which have been imported into matconvnet and 
-can be downloaded [here](http://www.robots.ox.ac.uk/~albanie/models.html#deeplab-models).
+can be downloaded [here](http://www.robots.ox.ac.uk/~albanie/mcn-models.html#deeplab-models).
 
 ### Demo
 
